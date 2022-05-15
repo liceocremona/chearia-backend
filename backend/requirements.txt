@@ -2,6 +2,6 @@ wheel
 fastapi[all]
 requests
 pymongo
-dotenv
+python-dotenv
 pytz
 pydantic
