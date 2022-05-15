@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn instance for chearia project api server
+After=network.target
+
+[Service]
+User=chearia
+Group=www-data
+WorkingDirectory=/home/chearia/chearia-repo-backend/client/backend/server
+ExecStart=/usr/bin/sh /home/chearia/chearia-repo-backend/client/backend/start.sh
+
+[Install]
+WantedBy=multi-user.target

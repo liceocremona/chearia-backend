@@ -1,0 +1,45 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name progettochearia.it;
+    location / {
+        root /srv/www/chearia/public/landing;
+        index index.html;
+    }
+}
+
+server {
+    server_name www.progettochearia.it;
+    return 301 $scheme://progettochearia.it$request_uri;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name web.progettochearia.it;
+    location / {
+        root /srv/www/chearia/public/webapp;
+        index index.html;
+    }
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name storage.progettochearia.it;
+    location / {
+        root /srv/www/media;
+        autoindex on;
+    }
+}
+
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name api.progettochearia.it;
+    location /v1 {
+        include proxy_params;
+        proxy_pass http://unix:/home/chearia/chearia-repo-backend/client/backend/server/chearia_backend.sock;
+    }
+}

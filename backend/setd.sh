@@ -1,0 +1,1 @@
+sudo certbot --nginx -d progettochearia.it -d www.progettochearia.it -d web.progettochearia.it -d api.progettochearia.it -d storage.progettochearia.it -d rstudio.progettochearia.it
