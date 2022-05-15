@@ -75,13 +75,16 @@ async def putdata(dataid: str = Path(..., regex="(example|CO|altitude|humidity|o
     data_collection = db1[dataid].with_options(codec_options=CodecOptions(
     tz_aware=True,
     tzinfo=now_timezone))
-    data_collection.insert_one({
+    try:
+        data_collection.insert_one({
         "metadata": {
             "id": dataid,
         },
         "value": data.datavalue,
         "timestamp": now
     })
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=str(error))
     return {
         "insertion":"success"
     }
