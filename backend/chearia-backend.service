@@ -5,8 +5,8 @@ After=network.target
 [Service]
 User=chearia
 Group=www-data
-WorkingDirectory=/home/chearia/chearia-repo-backend/client/backend/server
-ExecStart=/usr/bin/sh /home/chearia/chearia-repo-backend/client/backend/start.sh
+WorkingDirectory=/home/chearia/chearia-repo-backend/backend/server
+ExecStart=/usr/bin/sh /home/chearia/chearia-repo-backend/backend/start.sh
 
 [Install]
 WantedBy=multi-user.target
