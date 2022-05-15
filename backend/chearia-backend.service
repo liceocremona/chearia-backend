@@ -1,9 +1,9 @@
 [Unit]
-Description=Gunicorn instance for chearia project api server
+Description=Uvicorn instance for chearia project api server
 After=network.target
 
 [Service]
-User=chearia
+User=root
 Group=www-data
 WorkingDirectory=/home/chearia/chearia-repo-backend/backend/server
 ExecStart=/usr/bin/sh /home/chearia/chearia-repo-backend/backend/start.sh
