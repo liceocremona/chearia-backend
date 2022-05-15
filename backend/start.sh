@@ -1,3 +1,3 @@
 #!/bin/bash
-#. /home/chearia/chearia-repo-backend/client/backend/venv/bin/activate &&  /home/chearia/chearia-repo-backend/client/backend/venv/bin/gunicorn --preload --workers 3 --env "SCRIPT_NAME=/v1" --bind unix:chearia_backend.sock -m 777 wsgi:app
-. /home/chearia/chearia-repo-backend/backend/venv/bin/activate && /home/chearia/chearia-repo-backend/backend/venv/bin/uvicorn --uds='chearia_backend.sock' --workers=3 --root-path='/v1' --proxy-headers --forwarded-allow-ips='*' main:app
+#. /home/chearia/chearia-repo-backend/client/backend/venv/bin/activate && /home/chearia/chearia-repo-backend/client/backend/venv/bin/gunicorn --preload --workers 3 --env "SCRIPT_NAME=/v1" --bind unix:chearia_backend.sock -m 777 wsgi:app
+/home/chearia/chearia-repo-backend/backend/venv/bin/activate && /home/chearia/chearia-repo-backend/backend/venv/bin/uvicorn --uds='chearia_backend.sock' --workers=3 --root-path='/v1' --proxy-headers --forwarded-allow-ips='*' main:app
