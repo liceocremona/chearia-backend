@@ -1,6 +1,8 @@
 import re 
-
-dataid_regex = re.compile("(example|CO|altitude|humidity|ozone|pressure|temperature)")
-timestamp1_regex = re.compile("")
-
-timestamp2_regex = re.compile("^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$") #https://www.regular-expressions.info/dates.html
+dataid_regex_str = "(itwork|example|CO|altitude|humidity|ozone|pressure|temperature)"
+dataid_regex = re.compile("(itwork|example|CO|altitude|humidity|ozone|pressure|temperature)")
+timestamp1_regex = re.compile("((((19|20)([2468][048]|[13579][26]|0[48])|2000)-02-29|((19|20)[0-9]{2}-(0[4678]|1[02])-(0[1-9]|[12][0-9]|30)|(19|20)[0-9]{2}-(0[1359]|11)-(0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}-02-(0[1-9]|1[0-9]|2[0-8])))_([01][0-9]|2[0-3]):([012345][0-9]):([012345][0-9]))")
+timestamp_date_regex = re.compile("((((19|20)([2468][048]|[13579][26]|0[48])|2000)-02-29|((19|20)[0-9]{2}-(0[4678]|1[02])-(0[1-9]|[12][0-9]|30)|(19|20)[0-9]{2}-(0[1359]|11)-(0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}-02-(0[1-9]|1[0-9]|2[0-8]))))")
+timestamp_date_regex_str = "((((19|20)([2468][048]|[13579][26]|0[48])|2000)-02-29|((19|20)[0-9]{2}-(0[4678]|1[02])-(0[1-9]|[12][0-9]|30)|(19|20)[0-9]{2}-(0[1359]|11)-(0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}-02-(0[1-9]|1[0-9]|2[0-8]))))"
+timestamp_time_regex = re.compile("(([01][0-9]|2[0-3]):([012345][0-9]):([012345][0-9]))")
+#timestamp2_regex = re.compile("^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$") #https://www.regular-expressions.info/dates.html

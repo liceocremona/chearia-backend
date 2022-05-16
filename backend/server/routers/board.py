@@ -10,6 +10,7 @@ import sys
 sys.path.append("..")
 from loadenv import KEY
 from db_connect import client
+from use_regex import dataid_regex_str
 
 rome_tz = timezone('Europe/Rome')
 db1 = client.measurements1
@@ -64,7 +65,7 @@ async def getdate(tz: str = None):
 
 
 @router.put("/putdata/{dataid}", response_class=PlainTextResponse)
-async def putdata(dataid: str = Path(..., regex="(itwork|example|CO|altitude|humidity|ozone|pressure|temperature)"), data: Data = Body(...)):
+async def putdata(dataid: str = Path(..., regex=dataid_regex_str), data: Data = Body(...)):
     if not data.key == KEY:
         raise HTTPException(status_code=403, detail="Wrong key")
     if data.timestamptz:
