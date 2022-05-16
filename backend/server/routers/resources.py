@@ -38,7 +38,7 @@ async def list_all_graphs(type: str = None):
     return graphs_url_list
                 
 @router.get("/datas/{dataid}")
-async def list_all_data(dataid: str = Path(..., regex="(itwork|example|CO|altitude|humidity|ozone|pressure|temperature)"), gte: str = Query(...), lte: str = Query(...)):
+async def list_all_data(dataid: str = Path(..., regex="(itwork|example|CO|altitude|humidity|ozone|pressure|temperature)"), gte: str = Query(...), lte: str = Query(...), type: str = None):
     
     gte_time = datetime.strptime(gte, "%Y-%m-%d_%H:%M:%S")
     lte_time = datetime.strptime(lte, "%Y-%m-%d_%H:%M:%S")
@@ -61,6 +61,11 @@ async def list_all_data(dataid: str = Path(..., regex="(itwork|example|CO|altitu
             "time": data["timestamp"].strftime("%Y-%m-%d_%H:%M:%S"),
             "value": data["value"]
         })
+    if type == "html":
+        html_return = ""
+        for data in datas_list:
+            html_return += data["time"] + "&#9;" + str(data["value"]) + "<br>"
+        return Response(content=html_return, media_type="text/html")
     return datas_list
 # @router.get("/datas")
 # async def listdatas(start: str = Query(..., min_length=10, max_length=19), end: Optional[str] = Query(None, min_length=10, max_length=19), type: List[str] = Query(...)):
