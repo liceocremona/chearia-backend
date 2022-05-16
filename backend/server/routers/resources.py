@@ -55,7 +55,7 @@ async def list_all_data(dataid: str = Path(..., regex="(itwork|example|CO|altitu
         }
     })
     print(str(datas))
-    return datas
+    return "datas"
 # @router.get("/datas")
 # async def listdatas(start: str = Query(..., min_length=10, max_length=19), end: Optional[str] = Query(None, min_length=10, max_length=19), type: List[str] = Query(...)):
 #     start_timestamp = start.split("_")
