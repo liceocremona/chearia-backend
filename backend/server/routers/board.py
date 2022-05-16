@@ -64,7 +64,7 @@ async def getdate(tz: str = None):
 
 
 @router.put("/putdata/{dataid}")
-async def putdata(dataid: str = Path(..., regex="(example|CO|altitude|humidity|ozone|pressure|temperature)"), data: Data = Body(...)):
+async def putdata(dataid: str = Path(..., regex="(itwork|example|CO|altitude|humidity|ozone|pressure|temperature)"), data: Data = Body(...)):
     if not data.key == KEY:
         raise HTTPException(status_code=403, detail="Wrong key")
     if data.timestamptz:
