@@ -1,3 +1,4 @@
+from importlib.metadata import metadata
 from fastapi import APIRouter, Path, Body, HTTPException
 from fastapi.responses import PlainTextResponse
 from typing import Optional
@@ -86,5 +87,12 @@ async def putdata(dataid: str = Path(..., regex="(itwork|example|CO|altitude|hum
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
     return {
-        "insertion":"success"
+        "status": "ok",
+        "insert": {
+            "metadata": {
+                "id": dataid,
+            },
+            "value": data.datavalue,
+            "timestamp": now
+        }
     }
