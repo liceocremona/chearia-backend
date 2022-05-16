@@ -1,4 +1,3 @@
-from importlib.metadata import metadata
 from fastapi import APIRouter, Path, Body, HTTPException
 from fastapi.responses import PlainTextResponse
 from typing import Optional
