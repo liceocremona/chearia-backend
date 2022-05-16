@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 import os
 
 import sys
@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.get("/graph/all")
-async def list_all_graphs():
+async def list_all_graphs(type: str = None):
     if not STORAGE or len(STORAGE) == 0:
         raise HTTPException(status_code=503, detail="No resources available")
     graphs_url_list = []
@@ -25,6 +25,11 @@ async def list_all_graphs():
                     root = root[1:]
                 graph_url = GRAPH_BASEURL + graph
                 graphs_url_list.append(graph_url)
+    if type == "html":
+        html_return = ""
+        for graph_url in graphs_url_list:
+            html_return += "<a href='" + graph_url + "'>" + graph_url + "</a><br>"
+        return Response(content=html_return, media_type="text/html")
     return graphs_url_list
                 
 
