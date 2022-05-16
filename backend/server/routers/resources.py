@@ -64,7 +64,7 @@ async def list_all_data(dataid: str = Path(..., regex="(itwork|example|CO|altitu
     if type == "html":
         html_return = ""
         for data in datas_list:
-            html_return += data["time"] + "&emsp;" + str(data["value"]) + "<br>"
+            html_return += data["time"] + "&nbsp;&nbsp;&nbsp;&nbsp;" + str(data["value"]) + "<br>"
         return Response(content=html_return, media_type="text/html")
     return datas_list
 # @router.get("/datas")
