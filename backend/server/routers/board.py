@@ -63,7 +63,7 @@ async def getdate(tz: str = None):
     return time.strftime('%Y-%m-%d')
 
 
-@router.put("/putdata/{dataid}")
+@router.put("/putdata/{dataid}", response_class=PlainTextResponse)
 async def putdata(dataid: str = Path(..., regex="(itwork|example|CO|altitude|humidity|ozone|pressure|temperature)"), data: Data = Body(...)):
     if not data.key == KEY:
         raise HTTPException(status_code=403, detail="Wrong key")
@@ -85,13 +85,4 @@ async def putdata(dataid: str = Path(..., regex="(itwork|example|CO|altitude|hum
     })
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
-    return {
-        "status": "ok",
-        "insert": {
-            "metadata": {
-                "id": dataid,
-            },
-            "value": data.datavalue,
-            "timestamp": now
-        }
-    }
+    return "ok"
