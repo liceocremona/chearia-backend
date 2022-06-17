@@ -1,0 +1,7 @@
+wheel
+fastapi[all]
+requests
+pymongo
+python-dotenv
+pytz
+pydantic

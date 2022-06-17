@@ -1,0 +1,12 @@
+[Unit]
+Description=Uvicorn instance for chearia project api server
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/home/chearia/chearia-repo-backend/backend/server
+ExecStart=/usr/bin/sh /home/chearia/chearia-repo-backend/backend/start.sh
+
+[Install]
+WantedBy=multi-user.target
