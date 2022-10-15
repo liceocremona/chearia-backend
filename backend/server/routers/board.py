@@ -22,13 +22,13 @@ class Data(BaseModel):
     key: bytes = Field(..., description="The key for authenticate request", min_length=32, max_length=32)
 
 
-@router.get("/time", response_class=PlainTextResponse)
+@router.get("/time", response_class=PlainTextResponse, tags=["board"])
 async def gettime():
     time = datetime.now(rome_tz)
     return time.strftime('%H-%M')
 
-@router.get("/timems", response_class=PlainTextResponse)
-@router.get("/timems/{tz}", response_class=PlainTextResponse)
+@router.get("/timems", response_class=PlainTextResponse, tags=["board"])
+@router.get("/timems/{tz}", response_class=PlainTextResponse, tags=["board"])
 async def gettimems(tz: str = None):
     if tz:
         now_timezone = timezone('ETC/GMT'+tz)
@@ -41,20 +41,20 @@ async def gettimems(tz: str = None):
     return str(ms_from_midnight)
 
 
-@router.get("/time/hour", response_class=PlainTextResponse)
+@router.get("/time/hour", response_class=PlainTextResponse, tags=["board"])
 async def gettime_h():
     time = datetime.now(rome_tz)
     return time.strftime('%H')
 
 
-@router.get("/time/min", response_class=PlainTextResponse)
+@router.get("/time/min", response_class=PlainTextResponse, tags=["board"])
 async def gettime_min():
     time = datetime.now(rome_tz)
     return time.strftime('%M')
 
 
-@router.get("/date", response_class=PlainTextResponse)
-@router.get("/date/{tz}", response_class=PlainTextResponse)
+@router.get("/date", response_class=PlainTextResponse, tags=["board"])
+@router.get("/date/{tz}", response_class=PlainTextResponse, tags=["board"])
 async def getdate(tz: str = None):
     if tz:
         now_timezone = timezone('ETC/GMT'+tz)
@@ -64,7 +64,7 @@ async def getdate(tz: str = None):
     return time.strftime('%Y-%m-%d')
 
 
-@router.put("/putdata/{dataid}", response_class=PlainTextResponse)
+@router.put("/putdata/{dataid}", response_class=PlainTextResponse, tags=["board"])
 async def putdata(dataid: str = Path(..., regex=dataid_regex_str), data: Data = Body(...)):
     if not data.key == KEY:
         raise HTTPException(status_code=403, detail="Wrong key")

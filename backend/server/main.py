@@ -2,8 +2,11 @@ from fastapi import FastAPI, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from routers import board, resources
+from docs import tags_metadata_docs
 
-app = FastAPI()
+
+
+app = FastAPI(openapi_tags=tags_metadata_docs)
 
 origins=["https://progettochearia.it",
  "https://web.progettochearia.it",
@@ -25,7 +28,7 @@ app.include_router(
 )
 
 
-@app.get("/", response_class=RedirectResponse, status_code=302)
+@app.get("/", response_class=RedirectResponse, status_code=302, include_in_schema=False)
 async def root():
     return "https://progettochearia.it"
 

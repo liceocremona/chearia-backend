@@ -107,7 +107,7 @@ def map_storage(storage):
                 
                 
 
-@router.get("/graph/all")
+@router.get("/graph/all", tags=["resources"])
 async def list_all_graphs(type: str = None):
     if not STORAGE or len(STORAGE) == 0:
         raise HTTPException(status_code=503, detail="No resources available")
@@ -128,7 +128,7 @@ async def list_all_graphs(type: str = None):
         return Response(content=html_return, media_type="text/html")
     return graphs_url_list
 
-@router.post("/graph/query")
+@router.post("/graph/query", tags=["resources"])
 async def query_graph(
     dataid: List[str] = Query(default=["itwork"]),
     gte: str = Query(None, min_length=10, max_length=19),
@@ -142,13 +142,23 @@ async def query_graph(
 
     
                 
-@router.get("/datas/{dataid}")
+@router.get("/datas/{dataid}", tags=["resources"])
 async def list_all_data(
+
     dataid: str = Path(..., regex=dataid_regex_str),
-    gte: str = Query(None, min_length=10, max_length=19), 
-    lte: str = Query(None, min_length=10, max_length=19), 
-    type: str = Query(None, regex="(html|json)")
+    gte: str = Query(None, min_length=10, max_length=19,
+    title="Data iniziale",
+    description="Data d'inizio, ex: 2022-05-15_10:24:00 or 2022-05-15",
+    ), 
+    lte: str = Query(None, min_length=10, max_length=19,
+    title="Data finale",
+    description="Data di fine, ex: 2022-10-15_16:12:00 or 2022-10-15",
+    ), 
+    type: str = Query(None, regex="(html|json)"),
+    sort: str = Query(None, regex="(asc|desc)"),
     ):
+    sort = sort if sort else "asc" #variable to order of the data
+
     if not gte and not lte:
         raise HTTPException(status_code=400, detail="Bad request, insert at least one time parameter")
     fetch_dict = {
@@ -189,6 +199,9 @@ async def list_all_data(
             "value": data["value"],
             "metadata": data["metadata"]
         })
+    if sort == "asc":
+        datas_list.reverse()
+
     if type == "html":
         html_return = ""
         for data in datas_list:
