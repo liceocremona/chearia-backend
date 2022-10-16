@@ -1,7 +1,4 @@
 from datetime import datetime
-from email.policy import default
-from lib2to3.pgen2 import grammar
-from nis import match
 from fastapi import APIRouter, HTTPException, Response, Path, Query, Body
 from pydantic import BaseModel, Field
 from typing import Union, List
@@ -13,7 +10,7 @@ import sys
 sys.path.append("..")
 from loadenv import STORAGE
 from db_connect import client
-from use_regex import timestamp1_regex, dataid_regex_str, timestamp_date_regex, timestamp_time_regex, timestamp_date_regex_str
+from use_regex import timestamp1_regex, dataid_regex_str, timestamp_date_regex, timestamp_time_regex, timestamp_date_regex_str, timestamp_datetime_str1
 GRAPH_BASEURL = "https://storage.progettochearia.it/graph/"
 #from ..use_regex import timestamp1_regex, timestamp2_regex, dataid_regex
 #from ..loadenv import STORAGE
@@ -147,20 +144,25 @@ async def list_all_data(
 
     dataid: str = Path(..., regex=dataid_regex_str),
     gte: str = Query(None, min_length=10, max_length=19,
+    regex=timestamp_datetime_str1,
     title="Data iniziale",
     description="Data d'inizio, ex: 2022-05-15_10:24:00 or 2022-05-15",
     ), 
     lte: str = Query(None, min_length=10, max_length=19,
+    regex=timestamp_datetime_str1,
     title="Data finale",
     description="Data di fine, ex: 2022-10-15_16:12:00 or 2022-10-15",
     ), 
     type: str = Query(None, regex="(html|json)"),
     sort: str = Query(None, regex="(asc|desc)"),
     ):
-    sort = sort if sort else "asc" #variable to order of the data
+
 
     if not gte and not lte:
         raise HTTPException(status_code=400, detail="Bad request, insert at least one time parameter")
+    
+    sort = sort if sort else "asc" #variable to order of the data
+
     fetch_dict = {
         "timestamp":{}
     }
@@ -187,18 +189,31 @@ async def list_all_data(
         lte_time = rome_tz.localize(lte_time)
         fetch_dict["timestamp"]["$lte"] = lte_time
 
-
     data_collection = db1[dataid].with_options(codec_options=CodecOptions(
     tz_aware=True,
     tzinfo=rome_tz))
-    datas = data_collection.find(fetch_dict)
-    datas_list  = []
-    for data in datas:
-        datas_list.append({
+    try:
+        datas = None
+        datas = data_collection.find(fetch_dict)
+        datas_list  = []
+        for data in datas:
+            try:
+                item_data = {
             "time": data["timestamp"].strftime("%Y-%m-%d_%H:%M:%S"),
             "value": data["value"],
-            "metadata": data["metadata"]
-        })
+            "metadata": data["metadata"]}
+                datas_list.append(item_data)
+            except KeyError:
+                pass
+            
+    except Exception as error:
+        print(str(error) + "\n" + str(datas))
+        raise HTTPException(status_code=500, detail="Error while retrieving data from DB")
+        
+    
+
+    
+    
     if sort == "asc":
         datas_list.reverse()
 
