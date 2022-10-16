@@ -175,16 +175,12 @@ async def list_all_data(
     if gte:
         if len(gte.split("_")) == 1:
             gte = gte + "_00:00:00"
-        if not timestamp1_regex.match(gte):
-            raise HTTPException(status_code=400, detail="Invalid gte timestamp")
         gte_time = datetime.strptime(gte, "%Y-%m-%d_%H:%M:%S")
         gte_time = rome_tz.localize(gte_time)
         fetch_dict["timestamp"]["$gte"] = gte_time
     if lte:
         if len(lte.split("_")) == 1:
             lte = lte + "_23:59:59"
-        if not timestamp1_regex.match(lte):
-            raise HTTPException(status_code=400, detail="Invalid lte timestamp")
         lte_time = datetime.strptime(lte, "%Y-%m-%d_%H:%M:%S")
         lte_time = rome_tz.localize(lte_time)
         fetch_dict["timestamp"]["$lte"] = lte_time
