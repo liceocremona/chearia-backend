@@ -5,12 +5,14 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from pytz import timezone
 from bson.codec_options import CodecOptions
+import json 
 
 import sys
 sys.path.append("..")
 from loadenv import KEY
 from db_connect import client
 from use_regex import dataid_regex_str
+from event_manager import announcer
 
 rome_tz = timezone('Europe/Rome')
 db1 = client.measurements1
@@ -86,4 +88,13 @@ async def putdata(dataid: str = Path(..., regex=dataid_regex_str), data: Data = 
     })
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
+
+    str_json_data = json.dumps({
+        "metadata": {
+            "id": dataid,
+        },
+        "value": data.datavalue,
+        "timestamp": now
+    })
+    announcer.announce(msg=str_json_data)
     return "ok"

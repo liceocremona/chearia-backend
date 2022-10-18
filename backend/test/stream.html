@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="list"></div>
+    <script>
+        let data_source = new EventSource("http://localhost:5000/listen");
+        data_source.onmessage = (event) => {
+
+            const newElement = document.createElement("li");
+            const eventList = document.getElementById("list");
+
+            newElement.textContent = `message: ${event.data}`;
+            eventList.appendChild(newElement);
+        }
+    </script>
+
+</body>
+
+</html>
