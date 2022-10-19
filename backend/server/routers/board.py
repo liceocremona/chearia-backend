@@ -78,6 +78,14 @@ async def putdata(dataid: str = Path(..., regex=dataid_regex_str), data: Data = 
     data_collection = db1[dataid].with_options(codec_options=CodecOptions(
     tz_aware=True,
     tzinfo=now_timezone))
+    str_json_data = json.dumps({
+        "metadata": {
+            "id": dataid,
+        },
+        "value": data.datavalue,
+        "timestamp": now.strftime('%Y-%m-%d %H:%M:%S')
+    })
+    await announcer.announce(msg=str_json_data)
     try:
         data_collection.insert_one({
         "metadata": {
@@ -89,12 +97,5 @@ async def putdata(dataid: str = Path(..., regex=dataid_regex_str), data: Data = 
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
 
-    str_json_data = json.dumps({
-        "metadata": {
-            "id": dataid,
-        },
-        "value": data.datavalue,
-        "timestamp": now
-    })
-    announcer.announce(msg=str_json_data)
+    
     return "ok"

@@ -232,11 +232,11 @@ async def datas_streams(request: Request):
     Questa funzione restituisce uno streaming dei dai che arrivano dai sensori
     """
     async def event_generator():
-        datas = announcer.listen()
+        datas = await announcer.listen()
         while True:
             if await request.is_disconnected():
                 break
-            data = datas.get()
+            data = await datas.get()
             yield f"data: {data}\n\n"
             
     return EventSourceResponse(event_generator())
