@@ -1,8 +1,8 @@
-from use_regex import timestamp1_regex, dataid_regex_str, timestamp_date_regex, timestamp_time_regex, timestamp_date_regex_str, timestamp_datetime_str1
+from use_regex import timestamp1_regex, dataid_regex_str, timestamp_date_regex, timestamp_time_regex, timestamp_date_regex_str, timestamp_datetime_str1, timestamp_date_str2
 from db_connect import client
 from loadenv import STORAGE
 from event_manager import announcer
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Response, Path, Query, Body, Request
 from pydantic import BaseModel, Field
 from typing import Union, List
@@ -146,10 +146,10 @@ async def query_graph(
     return []
 
 
-@router.get("/datas/{dataid}", tags=["resources"])
+@router.get("/datas", tags=["resources"])
 async def list_all_data(
 
-    dataid: str = Path(..., regex=dataid_regex_str),
+    dataid: List[str] = Query(..., regex=dataid_regex_str),
     gte: str = Query(None, min_length=10, max_length=19,
                      regex=timestamp_datetime_str1,
                      title="Data iniziale",
@@ -160,11 +160,16 @@ async def list_all_data(
                      title="Data finale",
                      description="Data di fine, ex: 2022-10-15_16:12:00 or 2022-10-15",
                      ),
+    day: str = Query(None, min_length=10, max_length=10,
+                     regex=timestamp_date_str2,
+                     title="Giorno singolo",
+                     description="Giorno singolo, ex: 2022-10-15",
+                     ),                 
     type: str = Query(None, regex="(html|json)"),
     sort: str = Query(None, regex="(asc|desc)"),
 ):
 
-    if not gte and not lte:
+    if not gte and not lte and not day:
         raise HTTPException(
             status_code=400, detail="Bad request, insert at least one time parameter")
 
@@ -191,37 +196,62 @@ async def list_all_data(
         lte_time = datetime.strptime(lte, "%Y-%m-%d_%H:%M:%S")
         lte_time = rome_tz.localize(lte_time)
         fetch_dict["timestamp"]["$lte"] = lte_time
+    if not gte and not lte and day:
+        gte_time = datetime.strptime(day, "%Y-%m-%d")
+        gte_time = rome_tz.localize(gte_time)
+        lte_time = gte_time + timedelta(days=1)
+        fetch_dict["timestamp"]["$gte"] = gte_time
+        fetch_dict["timestamp"]["$lte"] = lte_time
 
-    data_collection = db1[dataid].with_options(codec_options=CodecOptions(
+    return_dict = {}
+
+    for key in dataid:
+        data_collection = db1[key].with_options(codec_options=CodecOptions(
         tz_aware=True,
         tzinfo=rome_tz))
-    try:
-        datas = None
-        datas = data_collection.find(fetch_dict)
-        datas_list = []
-        for data in datas:
-            try:
-                item_data = {
+
+        try:
+            datas = None
+            datas = data_collection.find(fetch_dict)
+            datas_list = []
+            for data in datas:
+                try:
+                    item_data = {
                     "time": data["timestamp"].strftime("%Y-%m-%d_%H:%M:%S"),
                     "value": data["value"],
                     "metadata": data["metadata"]}
-                datas_list.append(item_data)
-            except KeyError:
-                pass
+                    datas_list.append(item_data)
+                except KeyError:
+                    pass
+            if sort == "asc":
+                datas_list.reverse()
+            return_dict[key] = datas_list
+            
+        except Exception as error:
+            print(str(error) + "\n" + str(datas))
+            raise HTTPException(
+                status_code=500, detail="Error while retrieving data from DB")
 
-    except Exception as error:
-        print(str(error) + "\n" + str(datas))
-        raise HTTPException(
-            status_code=500, detail="Error while retrieving data from DB")
+    
 
-    if sort == "asc":
-        datas_list.reverse()
-
-    if type == "html":
+    if type == "html":#genera una lista dei dati visualizzabile in html
         html_return = ""
-        for data in datas_list:
-            html_return += data["time"] + \
-                "&nbsp;&nbsp;&nbsp;&nbsp;" + str(data["value"]) + "<br>"
+        n_iter = 0
+        html_return += "<table><thead><tr>"
+        for key in return_dict:
+            if len(return_dict[key]) > n_iter:
+                n_iter = len(return_dict[key])
+            html_return += "<th>" + key + "</th>"
+        html_return += "</tr></thead><tbody>"
+        for i in range(n_iter):
+            html_return += "<tr>"
+            for key in return_dict:
+                if len(return_dict[key]) > i:
+                    html_return += "<td style='padding-right: 3em;'>{0}:     {1}</td>".format(return_dict[key][i]["time"], str(return_dict[key][i]["value"]))
+                else:
+                    html_return += "<td></td>"
+            html_return += "</tr>"
+        html_return += "</tbody></table>"
         return Response(content=html_return, media_type="text/html")
     return datas_list
 
@@ -237,7 +267,8 @@ async def datas_streams(request: Request):
             if await request.is_disconnected():
                 break
             data = await datas.get()
-            yield f"data: {data}\n\n"
+            print(data)
+            yield data
             
     return EventSourceResponse(event_generator())
 # @router.get("/datas")
