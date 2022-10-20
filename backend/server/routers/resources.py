@@ -135,7 +135,7 @@ async def list_all_graphs(type: str = None):
     return graphs_url_list
 
 
-@router.post("/graph/query", tags=["resources"])
+@router.post("/graph/query", tags=["resources"], deprecated=True)
 async def query_graph(
     dataid: List[str] = Query(default=["itwork"]),
     gte: str = Query(None, min_length=10, max_length=19),
@@ -146,9 +146,9 @@ async def query_graph(
 
     return []
 
-@router.get("/datas", include_in_schema=False)
-async def datas_default():
-    return RedirectResponse("https://api.progettochearia.it/v1/docs#/resources/list_all_data_resources_datas_get")
+# @router.get("/datas", include_in_schema=False)
+# async def datas_default():
+#     return RedirectResponse("https://api.progettochearia.it/v1/docs#/resources/list_all_data_resources_datas_get")
 
 
 @router.get("/datas", tags=["resources"])
