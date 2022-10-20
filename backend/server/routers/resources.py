@@ -253,7 +253,7 @@ async def list_all_data(
             html_return += "</tr>"
         html_return += "</tbody></table>"
         return Response(content=html_return, media_type="text/html")
-    return datas_list
+    return return_dict
 
 
 @router.get("/datas_stream", tags=["resources"])
