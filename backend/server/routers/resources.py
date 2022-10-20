@@ -4,6 +4,7 @@ from loadenv import STORAGE
 from event_manager import announcer
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Response, Path, Query, Body, Request
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 from typing import Union, List
 import os
@@ -144,6 +145,10 @@ async def query_graph(
 ):
 
     return []
+
+@router.get("/datas", include_in_schema=False)
+async def datas_default():
+    return RedirectResponse("https://api.progettochearia.it/v1/docs#/resources/list_all_data_resources_datas_get")
 
 
 @router.get("/datas", tags=["resources"])
