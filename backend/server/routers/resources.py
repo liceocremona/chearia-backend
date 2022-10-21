@@ -16,6 +16,7 @@ import asyncio
 import sys
 sys.path.append("..")
 GRAPH_BASEURL = "https://storage.progettochearia.it/graph/"
+STORAGE = "/srv/www/media/graph"
 #from ..use_regex import timestamp1_regex, timestamp2_regex, dataid_regex
 #from ..loadenv import STORAGE
 
@@ -115,7 +116,7 @@ def map_storage(storage):
 
 @router.get("/graph/all", tags=["resources"])
 async def list_all_graphs(type: str = None):
-    if not STORAGE or len("/srv/www/media/graph") == 0:
+    if not STORAGE or len(STORAGE) == 0:
         raise HTTPException(status_code=503, detail="No resources available")
     graphs_url_list = []
     for root, dirs, files in os.walk(STORAGE):
