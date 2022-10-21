@@ -115,7 +115,7 @@ def map_storage(storage):
 
 @router.get("/graph/all", tags=["resources"])
 async def list_all_graphs(type: str = None):
-    if not STORAGE or len(STORAGE) == 0:
+    if not STORAGE or len("/srv/www/media/graph") == 0:
         raise HTTPException(status_code=503, detail="No resources available")
     graphs_url_list = []
     for root, dirs, files in os.walk(STORAGE):
