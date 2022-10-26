@@ -261,6 +261,53 @@ async def list_all_data(
         return Response(content=html_return, media_type="text/html")
     return return_dict
 
+@router.get("/datas/last", tags=["resources"])
+async def list_last_data(
+    dataid: List[str] = Query(..., regex=dataid_regex_str),
+    type: str = Query(None, regex="(html|json)"),
+):
+
+    return_dict = {}
+
+    for key in dataid:
+        data_collection = db1[key].with_options(codec_options=CodecOptions(
+        tz_aware=True,
+        tzinfo=rome_tz))
+
+        try:
+            datas = None
+            datas = data_collection.find().sort("timestamp", -1).limit(1)
+
+            for data in datas:
+                try:
+                    item_data = {
+                    "time": data["timestamp"].strftime("%Y-%m-%d_%H:%M:%S"),
+                    "value": data["value"],
+                    "metadata": data["metadata"]}
+                    return_dict[key] = item_data
+                    break
+                except KeyError:
+                    pass
+            
+        except Exception as error:
+            print(str(error) + "\n" + str(datas))
+            raise HTTPException(
+                status_code=500, detail="Error while retrieving data from DB")
+
+    if type == "html":
+        html_return = ""
+        html_return += "<table><thead><tr>"
+        for key in return_dict:
+            html_return += "<th>" + key + "</th>"
+        html_return += "</tr></thead><tbody>"
+        html_return += "<tr>"
+        for key in return_dict:
+            html_return += "<td style='padding-right: 3em;'>{0}:     {1}</td>".format(return_dict[key]["time"], str(return_dict[key]["value"]))
+        html_return += "</tr>"
+        html_return += "</tbody></table>"
+        return Response(content=html_return, media_type="text/html")
+    return return_dict
+
 
 @router.get("/datas_stream", tags=["resources"])
 async def datas_streams(request: Request):
