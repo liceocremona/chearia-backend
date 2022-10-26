@@ -30,5 +30,5 @@ app.include_router(
 
 @app.get("/", response_class=RedirectResponse, status_code=302, include_in_schema=False)
 async def root():
-    return "https://progettochearia.it"
+    return "https://api.progettochearia.it/v1/docs"
 
