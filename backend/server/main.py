@@ -4,9 +4,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers import board, resources
 from docs import tags_metadata_docs
 
+description = """
+# Documentazione del backend del progetto CHeArIA
+"""
 
-
-app = FastAPI(openapi_tags=tags_metadata_docs)
+app = FastAPI(
+    openapi_tags=tags_metadata_docs,
+    title="Progetto CHeArIA",
+    description=description,
+    version="1.0",
+    contact={
+        "url": "https://progettochearia.it"
+    },
+    license_info={
+        "name": "GNU General Public License v3.0",
+        "url": "https://raw.githubusercontent.com/liceocremona/chearia-backend/main/LICENSE"
+    }
+    )
 
 origins=["https://progettochearia.it",
  "https://web.progettochearia.it",
