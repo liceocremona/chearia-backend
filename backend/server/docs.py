@@ -1,3 +1,6 @@
+description_docs = """
+# Documentazione del backend del progetto CHeArIA
+"""
 tags_metadata_docs = [
     {
         "name": "resources",

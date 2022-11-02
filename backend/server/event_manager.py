@@ -1,5 +1,5 @@
 import asyncio
-class MessageAnnouncer:
+class MessageAnnouncer:#questa classe pemette di comunicare tra due endpoint
 
     def __init__(self):
         self.listeners = []

@@ -2,16 +2,14 @@ from fastapi import FastAPI, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from routers import board, resources
-from docs import tags_metadata_docs
+from docs import tags_metadata_docs, description_docs
 
-description = """
-# Documentazione del backend del progetto CHeArIA
-"""
+
 
 app = FastAPI(
     openapi_tags=tags_metadata_docs,
     title="Progetto CHeArIA",
-    description=description,
+    description=description_docs,
     version="1.0",
     contact={
         "url": "https://progettochearia.it"
