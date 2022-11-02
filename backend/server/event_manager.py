@@ -5,7 +5,7 @@ class MessageAnnouncer:
         self.listeners = []
 
     async def listen(self):
-        self.listeners.append(asyncio.Queue(maxsize=5))
+        self.listeners.append(asyncio.Queue(maxsize=1))
         return self.listeners[-1]
 
     async def announce(self, msg):
