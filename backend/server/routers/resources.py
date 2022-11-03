@@ -25,18 +25,29 @@ db1 = client.measurements1
 rome_tz = timezone('Europe/Rome')
 
 
+# response model solo per schema documentazione
+class Metadata(BaseModel):
+    id: str
+class Data(BaseModel):
+    time: str
+    value: float
+    metadata: Metadata
+    
+class DataResponse(BaseModel):
+    dataid: Data
+class DatasResponse(BaseModel):
+    dataid: List[Data]
+
+
+#input body models
+class DateUnique(BaseModel):
+    date: str = Field(min_length=10, max_length=19,
+                      description="The date to start from")
 class DateRange(BaseModel):
     gte: str = Field(min_length=10, max_length=19,
                      description="The date to start from")
     lte: str = Field(min_length=10, max_length=19,
                      description="The date to end to")
-
-
-class DateUnique(BaseModel):
-    date: str = Field(min_length=10, max_length=19,
-                      description="The date to start from")
-
-
 class DateQuery(BaseModel):
     date_range: Union[DateRange, None] = None
     date_unique: Union[DateUnique, None] = None
@@ -114,7 +125,25 @@ def map_storage(storage):
     return graphs_url
 
 
-@router.get("/graph/all", tags=["resources"])
+@router.get("/graph/all", tags=["resources"], responses={200: {
+    "description": "Return all graphs",
+    "content": {
+              "application/json": {
+            
+
+                "schema": {
+                    "title": "Graphs",
+                    "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+        }
+    },
+    summary="Lista di tutti i grafici"        
+    )
 async def list_all_graphs(type: str = None):
     if not STORAGE or len(STORAGE) == 0:
         raise HTTPException(status_code=503, detail="No resources available")
@@ -152,7 +181,16 @@ async def query_graph(
 #     return RedirectResponse("https://api.progettochearia.it/v1/docs#/resources/list_all_data_resources_datas_get")
 
 
-@router.get("/datas", tags=["resources"])
+@router.get("/datas", tags=["resources"],
+responses={
+    200: {
+        "description": "sucess response",
+        "model": DatasResponse}
+    },
+    summary="Cerca i dati per tipo"
+    )
+
+
 async def list_all_data(
 
     dataid: List[str] = Query(..., regex=dataid_regex_str),
@@ -174,6 +212,10 @@ async def list_all_data(
     type: str = Query(None, regex="(html|json)"),
     sort: str = Query(None, regex="(asc|desc)"),
 ):
+    """
+Questa funzione permette di cercare per dato e per tipo i dati raccolti nel DB, 
+[Trova i dati](https://web.progettochearia.it)
+"""
 
     if not gte and not lte and not day:
         raise HTTPException(
@@ -261,7 +303,15 @@ async def list_all_data(
         return Response(content=html_return, media_type="text/html")
     return return_dict
 
-@router.get("/datas/last", tags=["resources"])
+@router.get("/datas/last", tags=["resources"],
+responses={
+    200: {
+        "description": "sucess response",
+        "model": DataResponse
+    }
+},
+summary="Ritorna l'ultimo dato per tipo"
+)
 async def list_last_data(
     dataid: List[str] = Query(..., regex=dataid_regex_str),
     type: str = Query(None, regex="(html|json)"),
@@ -309,7 +359,9 @@ async def list_last_data(
     return return_dict
 
 
-@router.get("/datas_stream", tags=["resources"])
+@router.get("/datas_stream", tags=["resources"],
+summary="Stream dei dati in tempo reale",
+)
 async def datas_streams(request: Request):
     """
     Questa funzione restituisce uno streaming dei dai che arrivano dai sensori
