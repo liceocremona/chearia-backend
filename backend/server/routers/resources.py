@@ -16,7 +16,7 @@ import asyncio
 import sys
 sys.path.append("..")
 GRAPH_BASEURL = "https://storage.progettochearia.it/graph/"
-STORAGE = "/srv/www/media/graph"
+STORAGE = "/srv/www/media/graph/"
 #from ..use_regex import timestamp1_regex, timestamp2_regex, dataid_regex
 #from ..loadenv import STORAGE
 
