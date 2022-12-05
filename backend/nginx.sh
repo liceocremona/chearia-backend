@@ -1,1 +1,1 @@
-cp http.conf /etc/nginx/conf.d/
+cp /etc/nginx/conf.d/http.conf .
